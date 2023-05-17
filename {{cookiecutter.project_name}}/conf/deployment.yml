@@ -12,7 +12,7 @@ custom:
     new_cluster:
       <<: *basic-cluster-props
       num_workers: 1
-      node_type_id: "{{ '{{' }}cloud_node_type_id{{ '}}' }}"
+      node_type_id: "{{ "{{" }}cloud_node_type_id{{ "{{" }}"
 
 environments:
   stage:
@@ -20,44 +20,44 @@ environments:
       #######################################################################################
       #   Example workflow for integration tests                                            #
       #######################################################################################
-      - name: "{{cookiecutter.project_name}}-sample-etl"
+      - name: "{{project_name}}-sample-etl"
         tasks:
           - task_key: "main"
             <<: *basic-static-cluster
             python_wheel_task:
-              package_name: "{{cookiecutter.project_slug}}"
-              entry_point: "{{cookiecutter.project_slug}}.{{cookiecutter.pipeline_slug}}" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}/conf/tasks/sample_etl_config.yml", "--env", "qa"]
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/sample_etl_config.yml", "--env", "qa"]
   prod:
     workflows:
       #######################################################################################
       #   Example workflow for integration tests                                            #
       #######################################################################################
-      - name: "{{cookiecutter.project_name}}-sample-etl"
+      - name: "{{project_name}}-sample-etl"
         tasks:
           - task_key: "main"
             <<: *basic-static-cluster
             python_wheel_task:
-              package_name: "{{cookiecutter.project_slug}}"
-              entry_point: "{{cookiecutter.project_slug}}.{{cookiecutter.pipeline_slug}}" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}/conf/tasks/sample_etl_config.yml", "--env", "prod"]
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/sample_etl_config.yml", "--env", "prod"]
   default:
     workflows:
       #######################################################################################
       #   Example workflow for integration tests                                            #
       #######################################################################################
-      - name: "{{cookiecutter.project_name}}-sample-tests"
+      - name: "{{project_name}}-sample-tests"
         tasks:
           - task_key: "main"
             <<: *basic-static-cluster
             spark_python_task:
                 python_file: "file://tests/entrypoint.py"
                 # this call supports all standard pytest arguments
-                parameters: ["file:fuse://tests/integration", "--cov={{cookiecutter.project_slug}}"]
+                parameters: ["file:fuse://tests/integration", "--cov={{project_slug}}"]
       #######################################################################################
       # this is an example job with single ETL task based on 2.1 API and wheel_task format #
       ######################################################################################
-      - name: "{{cookiecutter.project_name}}-sample-etl"
+      - name: "{{project_name}}-sample-etl"
         job_clusters:
           - job_cluster_key: "default"
             <<: *basic-static-cluster
@@ -65,30 +65,30 @@ environments:
           - task_key: "etl_raw"
             job_cluster_key: "default"
             python_wheel_task:
-              package_name: "{{cookiecutter.project_slug}}"
-              entry_point: "{{cookiecutter.project_slug}}.{{cookiecutter.pipeline_slug}}.sqlTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}/conf/tasks/etl_sqlRaw_config.yml", "--env", ""]
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.sqlTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_sqlRaw_config.yml", "--env", ""]
           - task_key: "segmentation"
             job_cluster_key: "default"
             python_wheel_task:
-              package_name: "{{cookiecutter.project_slug}}"
-              entry_point: "{{cookiecutter.project_slug}}.{{cookiecutter.pipeline_slug}}.pythonTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}/conf/tasks/etl_segmentation_config.yml", "--env", ""]
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.pythonTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_segmentation_config.yml", "--env", ""]
             depends_on:
               - task_key: "etl_raw"
           - task_key: "sql_sequential"
             job_cluster_key: "default"
             python_wheel_task:
-              package_name: "{{cookiecutter.project_slug}}"
-              entry_point: "{{cookiecutter.project_slug}}.{{cookiecutter.pipeline_slug}}.sqlTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}/conf/tasks/etl_sqlSequential_config.yml", "--env", ""]
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.sqlTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_sqlSequential_config.yml", "--env", ""]
             depends_on:
               - task_key: "segmentation"
           - task_key: "expectations"
             job_cluster_key: "default"
             python_wheel_task:
-              package_name: "{{cookiecutter.project_slug}}"
-              entry_point: "{{cookiecutter.project_slug}}.{{cookiecutter.pipeline_slug}}.expectationsTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
-              parameters: ["--conf-file", "file:fuse://{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}/conf/tasks/etl_expectations_config.yml", "--env", ""]
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.expectationsTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_expectations_config.yml", "--env", ""]
             depends_on:
               - task_key: "sql_sequential"

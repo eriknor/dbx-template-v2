@@ -17,5 +17,8 @@
         "GitHub Actions",
         "Azure DevOps",
         "GitLab"
+    ],
+    "_copy_without_render": [
+        "*.yml"
     ]
 }
