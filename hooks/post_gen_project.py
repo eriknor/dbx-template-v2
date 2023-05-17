@@ -6,6 +6,7 @@ from jinja2 import Environment, FileSystemLoader
 from dbx.api.build import execute_shell_command
 from dbx.commands.configure import configure
 from dbx.constants import TEMPLATE_ROOT_PATH
+import os
 
 DBX_TEMPLATE_NAME = "guardian_pipeline"
 COMPONENTS_PATH = TEMPLATE_ROOT_PATH / DBX_TEMPLATE_NAME / "components"
@@ -21,6 +22,7 @@ PROFILE = "{{cookiecutter.profile}}"
 WORKSPACE_DIR = "{{cookiecutter.workspace_dir}}"
 ARTIFACT_LOCATION = "{{cookiecutter.artifact_location}}"
 
+PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
 
 class NamedTemplate:
     def __init__(self, env: Environment, path: str):
@@ -91,7 +93,7 @@ class PostProcessor:
         elif CLOUD == "Google Cloud":
             PostProcessor.TEMPLATE_PARAMETERS["cloud_node_type_id"] = "n1-standard-4"
 
-        NamedTemplate(env, "conf/deployment.yml").render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
+        NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,"conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
 
     @staticmethod
     def process():
