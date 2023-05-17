@@ -1,0 +1,6 @@
+{
+  source_catalog: "erik_example.",
+  source_schema: "sample_example.",
+  destination_catalog: "erik_example.",
+  destination_schema: "sample_example."
+}    

@@ -1,0 +1,94 @@
+# Custom section is used to store configurations that might be repetative.
+# Please read YAML documentation for details on how to use substitutions and anchors.
+custom:
+  basic-cluster-props: &basic-cluster-props
+    spark_version: "12.2.x-scala2.12"
+  basic-ml-cluster-props: &basic-ml-cluster-props
+    spark_version: "12.2.x-cpu-ml-scala2.12"
+  basic-photon-cluster-props: &photon-cluster-props
+    spark_version: "12.2.x-photon-scala2.12"
+    
+  basic-static-cluster: &basic-static-cluster
+    new_cluster:
+      <<: *basic-cluster-props
+      num_workers: 1
+      node_type_id: "{{cloud_node_type_id}}"
+
+environments:
+  stage:
+    workflows:
+      #######################################################################################
+      #   Example workflow for integration tests                                            #
+      #######################################################################################
+      - name: "{{project_name}}-sample-etl"
+        tasks:
+          - task_key: "main"
+            <<: *basic-static-cluster
+            python_wheel_task:
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/sample_etl_config.yml", "--env", "qa"]
+  prod:
+    workflows:
+      #######################################################################################
+      #   Example workflow for integration tests                                            #
+      #######################################################################################
+      - name: "{{project_name}}-sample-etl"
+        tasks:
+          - task_key: "main"
+            <<: *basic-static-cluster
+            python_wheel_task:
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/sample_etl_config.yml", "--env", "prod"]
+  default:
+    workflows:
+      #######################################################################################
+      #   Example workflow for integration tests                                            #
+      #######################################################################################
+      - name: "{{project_name}}-sample-tests"
+        tasks:
+          - task_key: "main"
+            <<: *basic-static-cluster
+            spark_python_task:
+                python_file: "file://tests/entrypoint.py"
+                # this call supports all standard pytest arguments
+                parameters: ["file:fuse://tests/integration", "--cov={{project_slug}}"]
+      #######################################################################################
+      # this is an example job with single ETL task based on 2.1 API and wheel_task format #
+      ######################################################################################
+      - name: "{{project_name}}-sample-etl"
+        job_clusters:
+          - job_cluster_key: "default"
+            <<: *basic-static-cluster
+        tasks:
+          - task_key: "etl_raw"
+            job_cluster_key: "default"
+            python_wheel_task:
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.sqlTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_sqlRaw_config.yml", "--env", ""]
+          - task_key: "segmentation"
+            job_cluster_key: "default"
+            python_wheel_task:
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.pythonTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_segmentation_config.yml", "--env", ""]
+            depends_on:
+              - task_key: "etl_raw"
+          - task_key: "sql_sequential"
+            job_cluster_key: "default"
+            python_wheel_task:
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.sqlTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_sqlSequential_config.yml", "--env", ""]
+            depends_on:
+              - task_key: "segmentation"
+          - task_key: "expectations"
+            job_cluster_key: "default"
+            python_wheel_task:
+              package_name: "{{project_slug}}"
+              entry_point: "{{project_slug}}.{{pipeline_slug}}.expectationsTask" # take a look at the setup.py entry_points section for details on how to define an entrypoint
+              parameters: ["--conf-file", "file:fuse://{{project_slug}}/{{pipeline_slug}}/conf/tasks/etl_expectations_config.yml", "--env", ""]
+            depends_on:
+              - task_key: "sql_sequential"

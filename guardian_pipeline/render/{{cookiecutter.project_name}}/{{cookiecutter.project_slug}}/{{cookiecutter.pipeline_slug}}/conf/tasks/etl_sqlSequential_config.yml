@@ -1,0 +1,16 @@
+queries: [
+  {
+    filename: "example01.sql",
+    source_catalog: "samples.",
+    source_schema: "nyctaxi.",
+    catalog: "erik_example.",
+    schema: "sample_example.",
+  },
+    {
+    filename: "example02.sql",
+    source_catalog: "samples.",
+    source_schema: "nyctaxi.",
+    catalog: "erik_example.",
+    schema: "sample_example.",
+  },
+]

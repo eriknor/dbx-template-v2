@@ -1,0 +1,21 @@
+{
+    "project_name": "guardian-pipeline",
+    "pipeline_name": "etl-pipeline",
+    "version": "0.0.1",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+    "pipeline_slug": "{{ cookiecutter.pipeline_name.lower().replace(' ', '_').replace('-', '_') }}",
+    "workspace_dir": "/Shared/dbx/{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}",
+    "artifact_location": "dbfs:/Shared/dbx/projects/{{cookiecutter.project_slug}}/{{cookiecutter.pipeline_slug}}",
+    "profile": "DEFAULT",
+    "cloud": [
+        "AWS",
+        "Azure",
+        "Google Cloud"
+    ],
+    "cicd_tool": [
+        "None",
+        "GitHub Actions",
+        "Azure DevOps",
+        "GitLab"
+    ]
+}

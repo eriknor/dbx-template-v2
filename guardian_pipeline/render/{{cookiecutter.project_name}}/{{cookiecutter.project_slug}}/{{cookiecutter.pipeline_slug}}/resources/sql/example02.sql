@@ -1,0 +1,1 @@
+create table if NOT EXISTS {env}{catalog}{schema}silver as select * from {env}{catalog}{schema}example where fare_amount > 0;

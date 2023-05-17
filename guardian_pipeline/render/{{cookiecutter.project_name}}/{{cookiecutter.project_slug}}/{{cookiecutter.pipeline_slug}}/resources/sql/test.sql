@@ -1,0 +1,1 @@
+create table if not exists trips as select * from (select 'jim' as name, 5 as fare_amount, 10 as trip_distance union select 'jill' as name, 21 as fare_amount, 2 as trip_distance);
