@@ -80,7 +80,7 @@ class PostProcessor:
 
         elif CICD_TOOL == "None":
             print("CI/CD tool argument was set to None, no CI configuration would be provided")
-            
+
         else:
             print("No CICD Defined")
 
@@ -99,7 +99,7 @@ class PostProcessor:
         else:
             print("No Cloud defined")
 
-        NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,"conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
+        NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,f"{PROJECT_NAME}/conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
 
     @staticmethod
     def process():
