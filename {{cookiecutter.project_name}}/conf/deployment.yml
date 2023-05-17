@@ -12,7 +12,7 @@ custom:
     new_cluster:
       <<: *basic-cluster-props
       num_workers: 1
-      node_type_id: "{{ "{{" }}cloud_node_type_id{{ "{{" }}"
+      node_type_id: "{{ '{{' }}cloud_node_type_id{{ '}}' }}"
 
 environments:
   stage:
