@@ -99,7 +99,7 @@ class PostProcessor:
         else:
             print("No Cloud defined")
 
-        NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,f"conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
+        NamedTemplate(env, "conf/deployment.yml").render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
 
     @staticmethod
     def process():
@@ -114,7 +114,7 @@ class PostProcessor:
             enable_context_based_upload_for_execute=False,
         )
 
-        env = Environment(loader=FileSystemLoader(COMPONENTS_PATH))
+        env = Environment(loader=FileSystemLoader(PROJECT_DIRECTORY))
 
         PostProcessor.process_ci_component(env)
         PostProcessor.process_cloud_component(env)
