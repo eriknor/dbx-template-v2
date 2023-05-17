@@ -80,6 +80,9 @@ class PostProcessor:
 
         elif CICD_TOOL == "None":
             print("CI/CD tool argument was set to None, no CI configuration would be provided")
+            
+        else:
+            print("No CICD Defined")
 
     @staticmethod
     def process_cloud_component(env: Environment):
@@ -92,6 +95,9 @@ class PostProcessor:
 
         elif CLOUD == "Google Cloud":
             PostProcessor.TEMPLATE_PARAMETERS["cloud_node_type_id"] = "n1-standard-4"
+        
+        else:
+            print("No Cloud defined")
 
         NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,"conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
 
