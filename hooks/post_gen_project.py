@@ -99,7 +99,7 @@ class PostProcessor:
         else:
             print("No Cloud defined")
 
-        NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,f"{PROJECT_NAME}/conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
+        NamedTemplate(env, os.path.join(PROJECT_DIRECTORY,f"conf/deployment.yml")).render_and_write(parameters=PostProcessor.TEMPLATE_PARAMETERS)
 
     @staticmethod
     def process():
