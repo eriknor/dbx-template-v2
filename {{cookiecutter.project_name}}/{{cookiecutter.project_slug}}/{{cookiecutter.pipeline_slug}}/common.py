@@ -5,7 +5,7 @@ import yaml
 import pathlib
 from pyspark.sql import SparkSession
 import sys
-
+import json
 
 def get_dbutils(
     spark: SparkSession,
@@ -73,6 +73,8 @@ class Task(ABC):
             self.logger.info(f"Conf file was provided, reading configuration from {conf_file}")
             result=self._read_config(conf_file)
         result["env"] = self._provide_env()
+        result["debug"] = self._provide_debug()
+        result.update(self._provide_override())
         return result
         
 
@@ -88,6 +90,32 @@ class Task(ABC):
         else:
             self.logger.info(f"env was provided, set to {env}")
             return env
+        
+    def _provide_debug(self):
+        self.logger.info("Reading debug from --debug job option")
+        debug = self._get_debug()
+        if not debug:
+            self.logger.info(
+                "No debug was provided, setting debug to blank."
+                "Please override configuration in subclass init method"
+            )
+            return "False"
+        else:
+            self.logger.info(f"debug was provided, set to {debug}")
+            return debug
+        
+    def _provide_override(self):
+        self.logger.info("Reading overrides from --override job option")
+        override = self._get_override()
+        if not override:
+            self.logger.info(
+                "No override was provided, setting override to blank."
+                "Please override configuration in subclass init method"
+            )
+            return {}
+        else:
+            self.logger.info(f"override was provided, set to {override}")
+            return override
 
     @staticmethod
     def _get_conf_file():
@@ -100,6 +128,22 @@ class Task(ABC):
     def _get_env():
         p = ArgumentParser()
         p.add_argument("--env", required=False, type=str)
+        namespace = p.parse_known_args(sys.argv[1:])[0]
+        return namespace.env
+
+
+    @staticmethod
+    def _get_debug():
+        p = ArgumentParser()
+        p.add_argument("--debug", required=False, type=str)
+        namespace = p.parse_known_args(sys.argv[1:])[0]
+        return namespace.env
+
+
+    @staticmethod
+    def _get_override():
+        p = ArgumentParser()
+        p.add_argument("--overrides", required=False, type=json.loads)
         namespace = p.parse_known_args(sys.argv[1:])[0]
         return namespace.env
 

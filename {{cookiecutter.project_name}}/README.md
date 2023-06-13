@@ -107,7 +107,7 @@ git push origin --tags
 
 #### project-name/project_slug/pipeline_slug/ 
 
-This is the base folder for all resources used by a the pipeline defined as pipline_slug
+This is the base folder for all resources used by the workflow/pipeline defined as pipline_slug
 
 ##### conf/tasks
 
